@@ -16,9 +16,8 @@ import com.amazonaws.toolkit.core.hackathon.models.CreateNewIamRoleInput;
 
 public class CreateNewIamRoleAction extends BaseAction<CreateNewIamRoleInput, CreateNewIamRoleActionOutput, ActionException>{
 
-    protected CreateNewIamRoleAction() {
+    public CreateNewIamRoleAction() {
         super(ActionInfo.CREATE_NEW_IAM_ROLE);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -27,12 +26,14 @@ public class CreateNewIamRoleAction extends BaseAction<CreateNewIamRoleInput, Cr
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(input.getRoleName())
                 .withAssumeRolePolicyDocument(input.getAssumeRolePolicy()));
         Role createdRole = result.getRole();
+        context.getLogger().info("Created new IAM Role. Arn %s", createdRole.getArn());
         String policyArn = iam.createPolicy(
                 new CreatePolicyRequest().withPolicyName(input.getPolicyName()).withPolicyDocument(input.getRolePolicy()))
                 .getPolicy().getArn();
         iam.attachRolePolicy(new AttachRolePolicyRequest()
                 .withRoleName(input.getRoleName())
                 .withPolicyArn(policyArn));
+        context.getLogger().info("Created new Policy. Arn %s", policyArn);
         return new CreateNewIamRoleActionOutput(ActionResult.SUCCEEDED, createdRole);
     }
 }
