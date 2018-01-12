@@ -1,6 +1,7 @@
 package com.amazonaws.toolkit.core.hackathon.models;
 
 public class CreateNewIamRoleInput extends ActionInput {
+    private final AwsScope awsScope;
     private final String roleName;
     private final String policyName;
     // What users can specify the Role
@@ -8,19 +9,20 @@ public class CreateNewIamRoleInput extends ActionInput {
     // The resources the users can access and what operations they can perform ont hem
     private final String rolePolicy;
 
-    public CreateNewIamRoleInput(PredefinedRole predefinedRole) {
-        this.roleName = predefinedRole.getRoleName();
-        this.policyName = predefinedRole.getPolicyName();
-        this.assumeRolePolicy = predefinedRole.getAssumeRolePolicy();
-        this.rolePolicy = predefinedRole.getRolePolicy();
+    // Using a PredefinedRole to fill out policy data.
+    public CreateNewIamRoleInput(PredefinedRole predefinedRole, AwsScope awsScope) {
+        this(predefinedRole.getRoleName(), predefinedRole.getPolicyName(),
+                predefinedRole.getAssumeRolePolicy(), predefinedRole.getRolePolicy(), awsScope);
     }
 
     // For creating custom roles.
-    public CreateNewIamRoleInput(String roleName, String policyName, String assumeRolePolicy, String rolePolicy) {
+    public CreateNewIamRoleInput(String roleName, String policyName, String assumeRolePolicy,
+            String rolePolicy, AwsScope awsScope) {
         this.roleName = roleName;
         this.policyName = policyName;
         this.assumeRolePolicy = assumeRolePolicy;
         this.rolePolicy = rolePolicy;
+        this.awsScope = awsScope;
     }
 
     public String getRoleName() {
@@ -37,5 +39,9 @@ public class CreateNewIamRoleInput extends ActionInput {
 
     public String getRolePolicy() {
         return rolePolicy;
+    }
+
+    public AwsScope getAwsScope() {
+        return awsScope;
     }
 }
